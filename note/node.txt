@@ -1,0 +1,417 @@
+1. create node project
+2. npm init
+3. npm i express // to create server
+4. npm i nodemon // for auto start node
+5. npm i mysql // to use database
+6. npm i util // to use asycn await function
+7. npm i cors // allow cors policy meaning allow connection between api and react
+8. npm i bcrypt // hash password
+9. npm i multer // allow upload image
+
+// react
+1. npm i axios // allow connection between react and api
+2. npm install antd --save // use antd library
+3. npm install react-bootstrap bootstrap // use bootstrap library
+4. npm i --save moment // to use time convertion in react
+
+
+
+
+
+
+
+
+
+
+
+// route related
+// register route
+app.get("/",(req,res)=>{
+    res.send("You have request my root server")
+})
+// res.query, res.param
+app.get("/api/user",(req,res)=>{
+    var obj = {
+        list1 : [10,20],
+        list2 : ["Sok", "Som"] 
+    }
+    res.json(obj)
+})
+// req.query
+app.get("/api/product",(req,res)=>{
+    res.json({
+        a:10,
+        b:20,
+        getQuery:req.query
+    })
+})
+// req.params
+app.get("/api/product/:id",(req,res)=>{
+    var id = req.params.id
+    var arrProduct = [
+        {
+            name: "coca",
+            id: 101,
+            price: 1
+        },
+        {
+            name: "lala",
+            id: 102,
+            price: 2
+        },
+        {
+            name: "Dara",
+            id: 103,
+            price: 3
+        },
+    ]
+
+    var productTmp = []
+    for (var i = 0; i < arrProduct.length ; i++){
+        if(arrProduct[i].id == id){
+            productTmp.push(arrProduct[i])
+            break;
+        }
+    }
+    res.json({
+        List: productTmp
+    })
+})
+// req.body
+app.post("/api/product",(req,res)=>{
+    res.json({
+        message: req.body
+    })
+})
+
+
+
+
+import React, { useEffect, useState } from "react";
+// import { request } from "../../components/request/request";
+// import {
+//   Button,
+//   Input,
+//   Space,
+//   Table,
+//   Modal,
+//   Form,
+//   Select,
+//   Popconfirm,
+// } from "antd";
+// import { Config, formatDateClient, formatDateServer } from "../../components/request/helper";
+// import styles from "./styles.module.css";
+// const { Option } = Select;
+// const layout = {
+//       labelCol: {
+//         span: 8,
+//       },
+//       wrapperCol: {
+//         span: 16,
+//       },
+//     };
+
+// const ACustomer = () => {
+//   const [form] = Form.useForm();
+//   const [list, setList] = useState([]);
+//   const [total, setTotal] = useState(0);
+//   const [visible, setVisible] = useState(false);
+//   const [passwordModalVisible, setPasswordModalVisible] = useState(false);
+//   const [id, setId] = useState(null);
+//   const [selectedCustomerTel, setSelectedCustomerTel] = useState("");
+//   const [textSerch, setTextSerch] = useState("");
+
+//   useEffect(() => {
+//     getList();
+//   }, []);
+
+//   const getList = async () => {
+//     var param = "";
+//     if (textSerch !== "") {
+//       param = "?textSerch=" + textSerch;
+//     }
+//     const res = await request("customer" + param, "get");
+//     if (res) {
+//       setList(res.list);
+//       setTotal(res.totalRecord[0].Total);
+//     } else {
+//       alert("Error");
+//     }
+//   };
+
+//   const onNewEmployee = () => {
+//     onClearForm();
+//     setVisible(true);
+//     setId(null)
+//   };
+
+//   const onCloseModal = () => {
+//     setVisible(false);
+//     onClearForm();
+//     setId(null);
+//   };
+
+//   const onClearForm = () => {
+//     form.resetFields();
+//   };
+
+//   const onDelete = async (id) => {
+//     const res = await request("customer/" + id, "delete", {});
+//     if (res) {
+//       getList();
+//     } else {
+//       alert("error");
+//     }
+//   };
+
+//   const onFinish = async (values) => {
+//     // can get data from form than pass to api
+//     if (id == null) {
+//       var param = {
+//         username: values.username,
+//         tel: values.tel,
+//         password: values.password, // Add password to the parameters
+//       };
+
+//       const res = await request("customer", "post", param);
+//       if (!res.error) {
+//         getList();
+//         form.resetFields();
+//         onCloseModal();
+//       } else {
+//         alert(res.message);
+//       }
+//     } else {
+//       // eslint-disable-next-line no-redeclare
+//       var param = {
+//         customer_id: id,
+//         username: values.username,
+//         tel: values.tel,
+//         password: values.password, // Add password to the parameters
+//       };
+
+//       const res = await request("customer", "put", param);
+//       if (!res.error) {
+//         getList();
+//         form.resetFields();
+//         onCloseModal();
+//       } else {
+//         alert(res.message);
+//       }
+//     }
+//   };
+
+//   const onClickEdit = (item) => {
+//     setId(item.customer_id);
+//     form.setFieldsValue({
+//       username: item.username,
+//       tel: item.tel,
+//     });
+//     setVisible(true);
+//   };
+
+//   const onSearch = () => {
+//     getList();
+//   };
+
+//   const onChangeTextSerch = (event) => {
+//     setTextSerch(event.target.value);
+//   };
+
+//   const showPasswordModal = (tel) => {
+//     setSelectedCustomerTel(tel);
+//     setPasswordModalVisible(true);
+//   };
+
+//   const closePasswordModal = () => {
+//     setSelectedCustomerTel("");
+//     setPasswordModalVisible(false);
+//   };
+
+//   const onUpdatePassword = async (values) => {
+//     const { newPassword, confirmPassword } = values;
+
+//     if (newPassword !== confirmPassword) {
+//       // Passwords do not match
+//       return;
+//     }
+
+//     const param = {
+//       tel: selectedCustomerTel,
+//       password: newPassword,
+//       confirmPassword: confirmPassword,
+//     };
+
+//     const res = await request("customer/set-password", "post", param);
+
+//     if (res) {
+//       // Handle success or display a message to the user
+//       console.log("Password updated successfully");
+//     } else {
+//       // Handle error or display an error message
+//       console.error("Error updating password");
+//     }
+
+//     closePasswordModal();
+//   };
+
+//   return (
+//     <div>
+//       <div className={styles.headerContainer}>
+//         <div className={styles.containFilter}>
+//           <div>
+//             <div className={styles.txtHeader}>Customer</div>
+//             <div>Total: {total} customer</div>
+//           </div>
+//           <Input.Search allowClear onSearch={onSearch} onChange={onChangeTextSerch} />
+//         </div>
+//         <Button onClick={onNewEmployee}>New Customer</Button>
+//       </div>
+//       <Table
+//         dataSource={list}
+//         columns={[
+//           {
+//             key: "No",
+//             title: "No",
+//             dataIndex: "customer_id",
+//             render: (value, item, index) => index + 1,
+//           },
+//           {
+//             key: "Username",
+//             title: "Username",
+//             dataIndex: "username",
+//           },
+//           {
+//             key: "Tel",
+//             title: "Telephone",
+//             dataIndex: "tel",
+//           },
+//           {
+//             key: "Action",
+//             title: "Action",
+//             render: (value, item) => (
+//               <Space>
+//                 <Button onClick={() => onClickEdit(item)} type="primary">
+//                   Edit
+//                 </Button>
+//                 <Popconfirm
+//                   title="Delete"
+//                   description="Are you sure to delete this record?"
+//                   okText="Yes"
+//                   cancelText="No"
+//                   onConfirm={() => onDelete(item.customer_id)}
+//                 >
+//                   <Button type="primary" danger>
+//                     Delete
+//                   </Button>
+//                 </Popconfirm>
+//                 <Button onClick={() => showPasswordModal(item.tel)}>
+//                   Update Password
+//                 </Button>
+//               </Space>
+//             ),
+//           },
+//         ]}
+//       />
+//       <Modal
+//         open={visible}
+//         title={id == null ? "New Customer" : "Update Customer"}
+//         onCancel={onCloseModal}
+//         footer={null}
+//         maskClosable={false}
+//       >
+//         <Form
+//           {...layout}
+//           form={form}
+//           name="control-hooks"
+//           onFinish={onFinish}
+//           style={{
+//             maxWidth: 600,
+//           }}
+//         >
+//           {/* ... Existing Form.Item components */}
+//           <Form.Item
+//             name="password"
+//             label="Password"
+//             rules={[
+//               {
+//                 required: id == null,
+//                 message: "Please enter a password",
+//               },
+//             ]}
+//           >
+//             <Input.Password />
+//           </Form.Item>
+//           {/* ... Existing Form.Item components */}
+//         </Form>
+//       </Modal>
+//       <Modal
+//         title="Update Password"
+//         visible={passwordModalVisible}
+//         onCancel={closePasswordModal}
+//         footer={null}
+//       >
+//         <Form
+//           {...layout}
+//           form={form}
+//           name="update-password-form"
+//           onFinish={onUpdatePassword}
+//           style={{
+//             maxWidth: 600,
+//           }}
+//         >
+//           <Form.Item
+//             name="newPassword"
+//             label="New Password"
+//             rules={[
+//               {
+//                 required: true,
+//                 message: "Please enter a new password",
+//               },
+//             ]}
+//           >
+//             <Input.Password />
+//           </Form.Item>
+
+//           <Form.Item
+//             name="confirmPassword"
+//             label="Confirm Password"
+//             dependencies={["newPassword"]}
+//             rules={[
+//               {
+//                 required: true,
+//                 message: "Please confirm your password",
+//               },
+//               ({ getFieldValue }) => ({
+//                 validator(_, value) {
+//                   if (!value || getFieldValue("newPassword") === value) {
+//                     return Promise.resolve();
+//                   }
+//                   return Promise.reject(
+//                     new Error("The two passwords do not match")
+//                   );
+//                 },
+//               }),
+//             ]}
+//           >
+//             <Input.Password />
+//           </Form.Item>
+
+//           <Form.Item wrapperCol={24} style={{ textAlign: "right" }}>
+//             <Space>
+//               <Button onClick={closePasswordModal} htmlType="button">
+//                 Cancel
+//               </Button>
+//               <Button type="primary" htmlType="submit">
+//                 Update Password
+//               </Button>
+//             </Space>
+//           </Form.Item>
+//         </Form>
+//       </Modal>
+//     </div>
+//   );
+// };
+
+// export default ACustomer;
+
